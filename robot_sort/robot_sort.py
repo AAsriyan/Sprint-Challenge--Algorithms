@@ -97,6 +97,28 @@ class SortingRobot:
         """
         return self._light == "ON"
 
+    def start_sort(self):
+        # this first loop will make the robot go back to starting position each time
+        while self.can_move_left() is True:
+            self.move_left()
+
+        # second loop will keep comparing and swapping until it moves to None placeholder
+        while self.compare_item() is not None:
+            if self.compare_item() is -1:
+                self.swap_item()
+            self.move_right()
+
+        # this will swap to get the None back into the robot's hands
+        # We need to do this once we are at the end of the sorting algo, because we need to get rid of that None at the end
+        self.swap_item()
+
+        # if we can't move right then the sorting has finished and we break out
+        if self.can_move_right() is False:
+            self.set_light_off()
+        else:   # if we can move right, then we still need to go again through the loop
+            self.move_right()
+            self.swap_item()
+
     def sort(self):
         """
         Sort the robot's list.
@@ -110,26 +132,7 @@ class SortingRobot:
 
         # This is the Main Loop that should run only once.
         while self.light_is_on() is True:
-            # this first loop will make the robot go back to starting position each time
-            while self.can_move_left() is True:
-                self.move_left()
-
-            # second loop will keep comparing and swapping until it moves to None placeholder
-            while self.compare_item() is not None:
-                if self.compare_item() is -1:
-                    self.swap_item()
-                self.move_right()
-
-            # this will swap to get the None back into the robot's hands
-            # We need to do this once we are at the end of the sorting algo, because we need to get rid of that None at the end
-            self.swap_item()
-
-            # if we can't move right then the sorting has finished and we break out
-            if self.can_move_right() is False:
-                self.set_light_off()
-            else:   # if we can move right, then we still need to go again through the loop
-                self.move_right()
-                self.swap_item()
+            self.start_sort()
         pass
 
 # TEST DATA
